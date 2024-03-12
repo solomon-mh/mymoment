@@ -278,3 +278,29 @@
     @apply flex gap-4 items-center justify-start hover:bg-transparent hover:text-white !important;
   }
 }
+/* tooltip */
+/* Example styles for the tooltip */
+p[title] {
+  position: relative;
+  cursor: pointer; /* Ensures the cursor changes to a pointer on hover */
+}
+
+p[title]:hover::after {
+  content: "LogOut";
+  background-color: #333;
+  color: red;
+  padding: 5px 10px;
+  border-radius: 5px;
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+p[title]:hover::after {
+  opacity: 1; /* Make the tooltip visible on hover */
+}
