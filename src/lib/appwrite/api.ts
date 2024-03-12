@@ -96,3 +96,11 @@ export async function getCurrentUser() {
     return null; // Return null or handle error as per your application's requirements
   }
 }
+export async function signOutAccount() {
+  try {
+    const session = await account.deleteSession("current");
+    return session;
+  } catch (error) {
+    console.log(error);
+  }
+}
