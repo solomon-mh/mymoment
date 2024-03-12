@@ -14,27 +14,26 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { signupValidation } from "@/lib/validation";
+import { SignupValidation } from "@/lib/validation";
 import Loader from "@/components/shared/Loader";
 import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import {
   useCreateUserAccount,
   useSignInAccount,
-} from "@/lib/react-query/react-query";
+} from "@/lib/react-query/queriesAndMutations";
 import { useUserContext } from "@/context/AuthContext";
 
-const SigninForm = () => {
+const SignupForm = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { checkAuthUser, isLoading: isUserLoading } = useUserContext(); // Added logout
+  const { checkAuthUser } = useUserContext(); // Added logout
   const { mutateAsync: createUserAccount, isPending: isCreatingUser } =
     useCreateUserAccount();
-  const { mutateAsync: signInAccount, isPending: isSigningIn } =
-    useSignInAccount();
+  const { mutateAsync: signInAccount } = useSignInAccount();
 
-  const form = useForm<z.infer<typeof signupValidation>>({
-    resolver: zodResolver(signupValidation),
+  const form = useForm<z.infer<typeof SignupValidation>>({
+    resolver: zodResolver(SignupValidation),
     defaultValues: {
       name: "",
       username: "",
@@ -43,7 +42,7 @@ const SigninForm = () => {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof signupValidation>) {
+  async function onSubmit(values: z.infer<typeof SignupValidation>) {
     const newUser = await createUserAccount(values);
     if (!newUser) {
       return toast({ title: "Signup failed. Please try again" });
@@ -156,4 +155,4 @@ const SigninForm = () => {
   );
 };
 
-export default SigninForm;
+export default SignupForm;
