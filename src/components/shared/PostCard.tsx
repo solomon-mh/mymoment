@@ -1,15 +1,27 @@
+import { useState } from "react";
 import { Models } from "appwrite";
 import { Link } from "react-router-dom";
 import { formatDateString } from "../../lib/utils";
 import { useUserContext } from "@/context/AuthContext";
+import PostStats from "./PostStats";
+
 type PostCardProps = {
   post: Models.Document;
 };
+
 const PostCard = ({ post }: PostCardProps) => {
   console.log(post);
   const { user } = useUserContext();
+  const [imageError, setImageError] = useState(false);
 
-  if (!post.creator) return;
+  if (!post.creator) return null;
+
+  // Convert tags string to array if necessary
+  let tags = post.tags;
+  if (typeof tags === "string") {
+    tags = tags.split(",").map((tag) => tag.trim());
+  }
+
   return (
     <div className='post-card'>
       <div className='flex-between'>
@@ -46,20 +58,33 @@ const PostCard = ({ post }: PostCardProps) => {
           <img src='/assets/icons/edit.svg' alt='edit' width={20} height={20} />
         </Link>
       </div>
-      <Link to={`/posts/${post.id}`}>
+      <Link to={`/posts/${post.$id}`}>
         <div className='small-medium lg:base-medium py-5'>
           <p>{post.caption}</p>
           <ul className='flex gap-1 mt-2'>
-            {Array.isArray(post.tags)
-              ? post.tags.map((tag: string) => (
-                  <li key={tag} className='text-light-3'>
+            {Array.isArray(tags)
+              ? tags.map((tag: string) => (
+                  <li key={crypto.randomUUID()} className='text-light-3'>
                     #{tag}
                   </li>
                 ))
               : ""}
           </ul>
         </div>
+        {!imageError && post.imageUrl ? (
+          <img
+            src={post.imageUrl}
+            alt='post image'
+            className='post-card_img'
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <p className='text-red py-6 px-12 mx-auto my-4 w-fit border border-gray-600 font-semibold rounded-lg flex-center font-mono'>
+            Sorry, the image coudn&apos;t be loaded 😢
+          </p>
+        )}
       </Link>
+      <PostStats post={post} userId={user.id} />
     </div>
   );
 };
